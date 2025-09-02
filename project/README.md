@@ -1,141 +1,118 @@
-# ImageFilterApp — Java Swing 이미지 필터 데모
+# ImageFilterApp — 자바 수업 프로젝트 (Java Swing 이미지 필터 데모)
 
-`BufferedImage`를 4분할(사분면)하여 각 영역에 서로 다른 필터(Original / Grayscale / Sepia / Invert)를 적용하는 **자바 스윙 GUI** 프로젝트입니다. 파일 선택으로 이미지를 로드하고, 콤보박스로 필터를 지정하거나 **Random**, **TimerRandom** 버튼으로 랜덤 적용/주기적 랜덤 적용을 할 수 있습니다.
+> **프로젝트 출처:** 본 애플리케이션은 **자바 수업 시간에 만든 프로젝트**입니다.
 
----
-
-## ✨ 주요 기능
-
-- **이미지 로드**: `JFileChooser`를 통해 JPG/PNG/GIF 불러오기
-- **4분할 필터**: 
-  - 1사분면(좌상): `filterComboBox1` → `originalFilter1`, `applyGrayscaleFilter1`, `applySepiaFilter1`, `applyInvertColorsFilter1`
-  - 2사분면(우상): `filterComboBox2` → `...Filter2`
-  - 3사분면(좌하): `filterComboBox3` → `...Filter3`
-  - 4사분면(우하): `filterComboBox4` → `...Filter4`
-- **Apply Filter**: 콤보박스 설정대로 즉시 적용
-- **Random Filter**: 4개 사분면에 무작위 필터 1회 적용
-- **TimerRandom Filter**: 1초 간격으로 무작위 필터를 반복 적용 (토글 방식: 한 번 더 누르면 중지)
+한 장의 이미지를 **4개 사분면**으로 분할하여 각 영역에 서로 다른 필터(Original / Grayscale / Sepia / Invert)를 적용하고, **무작위(Random)** 및 **주기적(Random Timer, 1초)** 변환으로 조합을 탐색할 수 있는 Java Swing 데모입니다.
 
 ---
 
-## 🖼️ 화면 구성
+## 1. 문제 정의 (Problem Definition)
 
-- 상단(NORTH): 4개의 필터 콤보박스
-- 중앙(CENTER): `JLabel` + `ImageIcon`으로 결과 이미지 표시
-- 하단(SOUTH): `Apply Filter`, `Random Filter`, `TimerRandom Filter` 버튼
+- 모바일과 같은 **작은 화면 환경**에서 원본과 필터 적용 이미지를 **두 장**으로 나란히 비교하기는 불편함.
+- 사용자는 다양한 필터로 **개성**을 표현하고 싶지만, **여러 결과를 한눈에 비교**하기 어려움.
+- 반복적인 필터 전환은 **인지적 부담**과 클릭 수를 증가시키며, 선호 조합을 결정하기까지 시간이 오래 걸림.
+
+**문제식:**  
+작은 화면에서도 한 장의 이미지로 **많은 필터 결과를 동시에** 비교할 수 있고, **빠르게** 선호 조합을 찾도록 만드는 UI/기능이 필요하다.
 
 ---
 
-## 🏗️ 빌드 & 실행
+## 2. 연구 동기 (Motivation)
 
-### 요구 사항
-- JDK 8 이상 (권장: 11+)
-- OS 제약 없음(Windows/macOS/Linux)
+- 사진 기반 SNS/메신저 환경에서 **개성 표현**과 **간편한 편집**의 수요 증가.
+- 원본-결과 비교의 **시각적 비용**과 **전환 비용**을 줄이는 UI가 사용자 경험을 개선할 수 있음.
+- 무작위/주기적 변환은 **탐색의 재미**와 **영감(serendipity)**을 제공하여 실험적 사용을 유도.
 
-### 컴파일
+---
+
+## 3. 해결 전략 및 설계 (Approach & Design)
+
+### 3.1 핵심 아이디어
+- 한 장의 이미지를 **사분면 분할**하여 각 구역에 **서로 다른 필터**를 적용 → 한 화면에서 **동시 비교**.
+- **콤보박스**로 구역별 필터 선택, **Random** 버튼으로 즉시 무작위 조합, **Random Timer(1초)**로 지속 탐색.
+
+### 3.2 UI & 동작 개요
+- 상단: 4개의 필터 콤보박스  
+- 중앙: `JLabel(ImageIcon)`으로 결과 표시  
+- 하단: `Apply Filter`, `Random Filter`, `TimerRandom Filter` 버튼
+
+### 3.3 구현 핵심
+- `JFileChooser`로 이미지 로드 → `originalImage` / `filteredImage` 준비
+- 각 사분면 좌표 범위에 대해 픽셀 단위 변환(`getRGB/setRGB`):
+  - **Grayscale**: `0.299R + 0.587G + 0.114B`
+  - **Sepia**: `tr=0.393R+0.769G+0.189B`, `tg=0.349R+0.686G+0.168B`, `tb=0.272R+0.534G+0.131B` (255 클램핑)
+  - **Invert**: `255 - channel`
+- 무작위/타이머: `Random` 즉시 1회, `Random Timer`는 1초 간격 반복(토글)
+
+> **개선 제안(선택):** Swing EDT 안전성을 위해 `javax.swing.Timer` 사용, 고해상도 최적화를 위해 `BufferedImageOp(ColorConvertOp/RescaleOp)` 고려.
+
+---
+
+## 4. 평가/실험 방법 (Evaluation Plan)
+
+**목표 지표(정량):**
+- 선호 필터 조합 결정까지 **작업 시간** (초)
+- 설정/전환 **클릭 수**
+- **주관적 만족도** (Likert 1–5)
+
+**실험 절차(예시):**
+1. 참가자에게 동일한 원본 이미지 제공.
+2. (A) 기존 방식: 단일 필터 전환 UI, (B) 본 앱: 사분면+Random/Timer 방식으로 **카운터밸런싱**.
+3. “가장 마음에 드는 결과”를 선택하도록 하고, 시간/클릭 수 측정.
+4. 사용 후 만족도 및 사용성(간편함/재미/명확성) 설문.
+5. 통계 검정(예: 대응표본 t-test)으로 차이 분석.
+
+---
+
+## 5. 기대 효과 (Expected Outcomes)
+
+- 작은 화면에서도 **동시 비교**로 전환 비용 감소 → **결정 시간 단축**.
+- **무작위/주기적 탐색**으로 실험성·재미 증가 → **몰입도 향상**.
+- 한 장의 이미지에서 **개성 있는 조합**을 직관적으로 구성.
+
+---
+
+## 6. 사용 시나리오 (Use Cases)
+
+- SNS 업로드 전, 다양한 필터 조합을 한 화면에서 빠르게 비교/선택.
+- 수업/워크숍에서 필터 효과를 **시각적으로 동시에** 설명/데모.
+- 썸네일/배너 제작 시, 구역별 분위기 조합을 빠르게 탐색.
+
+---
+
+## 7. 시스템 요구 사항 (Requirements)
+
+- **JDK**: 8 이상(권장 11+)
+- **OS**: Windows / macOS / Linux
+- **라이브러리**: 표준 Java SE (Swing/2D)
+
+---
+
+## 8. 빌드 & 실행 (Build & Run)
+
 ```bash
 # 파일명: ImageFilterApp.java
 javac -encoding UTF-8 ImageFilterApp.java
-```
-
-### 실행
-```bash
 java ImageFilterApp
 ```
 
-### 첫 실행 흐름
-1. 앱 시작 시 파일 선택 대화상자가 열립니다.
-2. 이미지를 선택하면 `originalImage`가 로드되고, 동일 크기의 `filteredImage`가 초기화됩니다.
-3. 콤보박스를 고른 뒤 **Apply Filter**를 누르거나, **Random/TimerRandom** 버튼으로 테스트하세요.
-
-> **Tip**: 파일 선택을 취소하면 이미지가 로드되지 않으므로, 필터 버튼을 누르기 전에 반드시 이미지를 로드하세요.
+**첫 실행 흐름:** 앱 시작 → 파일 선택 → 사분면별 필터 선택/Random/Timer 활용
 
 ---
 
-## 🧪 필터 동작 개요
+## 9. 한계 및 향후 과제 (Limitations & Future Work)
 
-- **Grayscale**: `0.299*R + 0.587*G + 0.114*B` 가중치 합으로 회색조 변환
-- **Sepia**: 
-  - `tr = 0.393R + 0.769G + 0.189B`  
-  - `tg = 0.349R + 0.686G + 0.168B`  
-  - `tb = 0.272R + 0.534G + 0.131B`  
-  - 각 채널을 `255`로 클램핑
-- **Invert**: 각 채널을 `255 - channel`로 반전
-
-모든 필터는 지정된 사분면의 `(x, y)` 범위 안에서만 `setRGB()`로 픽셀을 갱신합니다.
+- **성능 최적화**: 초고해상도 이미지에서 픽셀 루프 비용 증가
+- **레이아웃 확장**: 3/6/9분할, 사용자 지정 그리드
+- **필터 확장**: 밝기/대비/감마/블러/샤픈, LUT 기반 효과
+- **저장/공유**: 결과 이미지 저장(JPEG/PNG), 구역별 프리셋 관리
+- **EDT 안정성**: 모든 UI 갱신을 EDT에서 처리 (`javax.swing.Timer` 권장)
 
 ---
 
-## 🧩 사분면 좌표 범위
+## 10. 라이선스 / 출처 (License / Attribution)
 
-가로 W, 세로 H라 할 때:
-
-- **1사분면(좌상)**: `x: [0, W/2), y: [0, H/2)`  
-- **2사분면(우상)**: `x: [W/2, W), y: [0, H/2)`  
-- **3사분면(좌하)**: `x: [0, W/2), y: [H/2, H)`  
-- **4사분면(우하)**: `x: [W/2, W), y: [H/2, H)`
-
----
-
-## ⏱️ 타이머 동작
-
-- **TimerRandom Filter** 버튼은 `java.util.Timer`로 1초 주기 `TimerTask`를 등록하여 `RandomButton()`을 호출합니다.
-- 토글 방식: 실행 중일 때 다시 누르면 `timer.cancel()`로 중지 후 플래그를 업데이트합니다.
-
-> **권장 개선**: `Swing` 환경에서는 `javax.swing.Timer`를 사용하면 이벤트 디스패치 스레드(EDT)에서 안전하게 UI 갱신이 가능합니다.
-
----
-
-## ⚠️ 주의/개선 포인트
-
-1. **이미지 미선택(취소)**  
-   - 현재 코드에서는 파일 선택을 취소하면 `originalImage == null` 상태입니다. 이후 `Random Filter`/`TimerRandom`을 누르면 `getRGB()` 호출에서 NPE 위험이 있습니다.  
-   - **개선**: 이미지 로드 전에는 버튼을 비활성화하거나 `originalImage == null` 체크로 가드하세요.
-
-2. **랜덤 인덱스 길이 참조**  
-   - `functions2/3/4`의 `randomIndex` 계산에서 `functions1.length`를 사용합니다. 지금은 길이가 모두 4로 같아 문제 없지만, **각 배열의 length를 사용**하는 방식이 안전합니다.
-
-3. **알파 채널**  
-   - 현재 `TYPE_INT_RGB` 기반이라 알파가 필요하지 않지만, 만약 `TYPE_INT_ARGB`로 바꾸면 `0xFF << 24`을 포함한 `0xAARRGGBB` 형태로 `setRGB`하는 것이 좋습니다.  
-   - 예: `int argb = (0xFF << 24) | (r << 16) | (g << 8) | b;`
-
-4. **성능**  
-   - 고해상도 이미지에서 픽셀 루프가 느릴 수 있습니다. `BufferedImageOp(ColorConvertOp/RescaleOp)` 혹은 `Raster`/`LookupTable` 기반 최적화를 검토할 수 있습니다.
-
-5. **스레드 안전**  
-   - `java.util.Timer`는 별도 스레드에서 콜백을 실행합니다. UI 업데이트는 반드시 EDT에서 처리해야 하므로 `SwingUtilities.invokeLater(...)`로 래핑하는 것을 권장합니다.
-
-6. **초기화 시점**  
-   - `initializeFilteredImage()`는 `originalImage`가 로드된 후 호출되어야 합니다(현재 흐름은 적절). 이미지 교체 로직을 넣는다면 매번 **동일 크기/타입으로 재생성** 필요.
-
----
-
-## 📁 파일 구조(단일 파일)
-
-```
-ImageFilterApp.java
-```
-
-핵심 메서드
-- `loadImage1()` : 파일 선택 → `originalImage` 로드
-- `initializeFilteredImage()` : `filteredImage` 생성
-- `applyFilter()` : 콤보박스 값에 따라 4분면 필터 적용
-- `RandomButton()` : 한 번 랜덤 적용
-- `TimerRandomButton()` : 1초 간격 랜덤 토글
-- `originalFilter{1..4} / apply{Grayscale|Sepia|Invert}Filter{1..4}()` : 사분면별 처리
-- `updateUI()` : `ImageIcon`으로 표시/갱신
-
----
-
-## 🔍 트러블슈팅
-
-- **이미지가 보이지 않음**: 파일 선택을 취소했는지 확인. 다시 실행하여 이미지를 선택하세요.
-- **버튼 반응 없음**: 이미지 로드 전에 눌렀는지 확인. 가드 코드/버튼 비활성화를 고려하세요.
-- **UI가 버벅거림**: 큰 이미지에서는 처리 시간이 필요합니다. 타이머 주기를 늘리거나 최적화를 적용하세요.
-
----
-
-## 라이선스
-
-교육/실습 용도. 외부 배포 시 라이선스를 명시하세요(예: MIT).
+- **용도**: 교육/실습 목적
+- **출처**: 자바 수업 과제/프로젝트
+- (필요 시) MIT 등 명시
 
