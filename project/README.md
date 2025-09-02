@@ -1,6 +1,6 @@
 # ImageFilterApp — Java Swing 이미지 필터 데모
 
-`BufferedImage`를 4분할(사분면)하여 각 영역에 서로 다른 필터(Original / Grayscale / Sepia / Invert)를 적용하는 **자바 스윙 GUI** 예제입니다. 파일 선택으로 이미지를 로드하고, 콤보박스로 필터를 지정하거나 **Random**, **TimerRandom** 버튼으로 랜덤 적용/주기적 랜덤 적용을 할 수 있습니다.
+`BufferedImage`를 4분할(사분면)하여 각 영역에 서로 다른 필터(Original / Grayscale / Sepia / Invert)를 적용하는 **자바 스윙 GUI** 프로젝트입니다. 파일 선택으로 이미지를 로드하고, 콤보박스로 필터를 지정하거나 **Random**, **TimerRandom** 버튼으로 랜덤 적용/주기적 랜덤 적용을 할 수 있습니다.
 
 ---
 
