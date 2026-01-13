@@ -60,7 +60,8 @@ public class Calculator extends Frame implements ActionListener {
 	        ActionListener CButtonListener = new ActionListener() {
 	            public void actionPerformed(ActionEvent e) {
 	                    tf.setText("");
-	                                                      	
+						op1 = op2 = result = 0;
+      					operator = "";                        	
 	            }
 	        };
 	        ActionListener clearButtonListener = new ActionListener() {
@@ -72,12 +73,46 @@ public class Calculator extends Frame implements ActionListener {
 	                }                                        	
 	            }
 	        };
-	        ActionListener ButtonListener = new ActionListener() {
-	            public void actionPerformed(ActionEvent e) {
-	               
-	                                                       	
-	            }
-	        };
+			ActionListener ButtonListener = new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					String label = ((Button) e.getSource()).getLabel();
+
+					try {
+						// 1. 사칙연산자(+, -, x, /) 클릭 시: 첫 번째 숫자(op1)와 연산자 저장
+						if (label.equals("+") || label.equals("-") || label.equals("x") || label.equals("/")) {
+							op1 = Double.parseDouble(tf.getText());
+							operator = label;
+							tf.setText(""); // 다음 숫자 입력을 위해 화면 비움
+						} 
+						// 2. 결과 확인(=) 클릭 시: 두 번째 숫자(op2)를 읽어 연산 후 결과 출력
+						else if (label.equals("=")) {
+							op2 = Double.parseDouble(tf.getText());
+							switch (operator) {
+								case "+": result = op1 + op2; break;
+								case "-": result = op1 - op2; break;
+								case "x": result = op1 * op2; break;
+								case "/": 
+									if (op2 != 0) result = op1 / op2;
+									else { tf.setText("Error"); return; } // 0으로 나눌 때 처리
+									break;
+							}
+							tf.setText(String.valueOf(result));
+						} 
+						// 3. 특수 기능(sqrt, x^2, +/- 등) 클릭 시: 즉시 연산 결과 출력
+						else if (label.equals("sqrt")) {
+							tf.setText(String.valueOf(Math.sqrt(Double.parseDouble(tf.getText()))));
+						} else if (label.equals("x^2")) {
+							double val = Double.parseDouble(tf.getText());
+							tf.setText(String.valueOf(val * val));
+						} else if (label.equals("+/-")) {
+							double val = Double.parseDouble(tf.getText());
+							tf.setText(String.valueOf(val * -1));
+						}
+					} catch (Exception ex) {
+						tf.setText("Error"); // 잘못된 입력 시 에러 표시
+					}
+				}
+			};
 	        
 	 
 	        b1.addActionListener(ButtonListener);
