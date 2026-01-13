@@ -7,7 +7,8 @@ import java.util.StringTokenizer;
 public class Pro3 {
 	public static void main(String[] args) throws IOException{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		RandomAccessFile raf = new RandomAccessFile("C:/Test/album.ppm", "rw");
+		String dir = "C:/Test/"; 
+		RandomAccessFile raf = new RandomAccessFile(dir + "album.ppm", "rw");
 		FileChannel fc = raf.getChannel();
 		
 		System.out.println("Input same-size six ppm filenames:");
@@ -24,7 +25,7 @@ public class Pro3 {
 	
 		for (int i = 0; i < nf; i++) {
 			file[i] = st.nextToken();
-			path[i] = "C:/Test/" + file[i];
+			path[i] = dir + file[i];
 			inf[i] = new RandomAccessFile(path[i], "r");
 			fcin[i] = inf[i].getChannel();
 		}
