@@ -40,21 +40,22 @@ public class Pro3 {
 		byteBuf1.flip();
 		fc.write(byteBuf1);
 	
-		for (int j= 0; j < height; j++) {
-			for (int k = 0; k < nf/2; k++) {
-				ByteBuffer dataBuf = ByteBuffer.allocate(width * 3);
+
+		for (int j = 0; j < height; j++) { 
+			for (int k = 0; k < 3; k++) {
+				ByteBuffer dataBuf = ByteBuffer.allocate(width * 3); 
 				fcin[k].read(dataBuf);
 				dataBuf.flip();
-				fc.write(dataBuf);
+				fc.write(dataBuf); 
 			}
 		}
-		
-		for (int j= height+1; j < height*nf; j++) {
-			for (int k = 0; k < nf; k++) {
+	
+		for (int j = 0; j < height; j++) { 
+			for (int k = 3; k < 6; k++) { 
 				ByteBuffer dataBuf = ByteBuffer.allocate(width * 3);
 				fcin[k].read(dataBuf);
 				dataBuf.flip();
-				fc.write(dataBuf);
+				fc.write(dataBuf); 
 			}
 		}
 		ByteBuffer byteBuf2 = ByteBuffer.allocate(header.length());
