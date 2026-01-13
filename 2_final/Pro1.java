@@ -54,8 +54,8 @@ public class Pro1 extends JFrame implements ActionListener{
 		progressBar5.setValue(0);
 		progressBar5.setStringPainted(true);
  
-		JPanel panel1 = new JPanel(new GridLayout(1,3));
-		JPanel panel2 = new JPanel(new GridLayout(1,3));
+		JPanel panel1 = new JPanel(new GridLayout(1,5));
+		JPanel panel2 = new JPanel(new GridLayout(1,5));
 		
 		panel1.add(voteButton1);
 		panel1.add(voteButton2);
