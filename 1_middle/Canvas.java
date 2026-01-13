@@ -2,15 +2,15 @@ package 박병우exam;
 import java.awt.*;
 import java.awt.Canvas;
 
-public class Canvas{
+public class CanvasExam{
 
 	public static void main(String[] args){
 		Frame f=new Frame("Canvas");
 		
 		MyCanvas canvas=new MyCanvas();
 		
-		Color Color =new Color(0,110,0);
-		canvas.setBackground(Color);
+		Color bgColor =new Color(0,110,0);
+		canvas.setBackground(bgColor);
 		
 		f.add(canvas);
 	
