@@ -63,7 +63,7 @@ public class Calculator extends Frame implements ActionListener {
 						op1 = op2 = result = 0;
       					operator = "";                        	
 	            }
-	        };
+	        };		
 	        ActionListener clearButtonListener = new ActionListener() {
 	            public void actionPerformed(ActionEvent e) {
 	                String text = tf.getText();
